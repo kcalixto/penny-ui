@@ -1,0 +1,84 @@
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@2.0.3
+
+executors:
+  build-executor:
+    docker:
+      - image: cimg/node:14.15.0
+
+jobs:
+  build_publish_prd:
+    executor: build-executor
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "d3:1d:e1:38:fd:a1:c0:55:38:04:aa:63:95:af:de:60"
+      - run: yarn
+      - run: BUILD_ENV=production yarn build
+      - run:
+          name: Tar and gz
+          command: tar -czvf public.tar.gz -C public .
+      - aws-cli/setup:
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+      - run:
+          name: Sync build to production S3
+          command: AWS_REGION="sa-east-1" aws s3 cp ./public.tar.gz s3://rv-brazil-artifacts-production-sa-east-1/bolt-ui/production/${CIRCLE_TAG}.tar.gz
+  build_publish_dev:
+    executor: build-executor
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "d3:1d:e1:38:fd:a1:c0:55:38:04:aa:63:95:af:de:60"
+      - run: yarn
+      - run: BUILD_ENV=development yarn build
+      - run:
+          name: Tar and gz
+          command: tar -czvf public.tar.gz -C public .
+      - aws-cli/setup:
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+      - run:
+          name: Sync build to development S3
+          command: AWS_REGION="sa-east-1" aws s3 cp ./public.tar.gz s3://rv-brazil-artifacts-production-sa-east-1/bolt-ui/development/${CIRCLE_TAG}.tar.gz
+
+  tag:
+    docker:
+      - image: cimg/base:2020.08
+    environment:
+      VERSION: "1.0"
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "5c:f7:44:03:47:ea:54:0b:d2:88:b9:bc:cb:a1:52:b3"
+
+      - checkout
+      - run: |
+          TAG="v$VERSION.$CIRCLE_BUILD_NUM"
+          git tag $TAG
+          git push origin $TAG
+
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      - tag:
+          filters:
+            branches:
+              only: /(main|development)/
+      - build_publish_prd:
+          filters:
+            tags:
+              only: /v.*/
+            branches:
+              only: main
+      - build_publish_dev:
+          filters:
+            tags:
+              only: /v.*/
+            branches:
+              only: development
