@@ -1,0 +1,49 @@
+* {
+    font-family: 'Open Sans', sans-serif;
+}
+
+#status-text {
+    color: green;
+}
+
+.flex-container-row {
+    display: flex;
+    flex-direction: row;
+}
+
+#instances {
+    display: flex;
+    flex-direction: row;
+}
+
+#instance-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: fit-content;
+    height: fit-content;
+    padding: 0.5rem;
+    margin: 0 1.5rem 1.5rem 1.5rem;
+    border: 1px solid lightgray;
+}
+
+#instance-title {
+    /* height: 3rem; */
+    width: 100%;
+
+    margin: 0.5rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 1rem;
+
+    border: 1px solid lightgray;
+}
+
+#instance-button {
+    background-color: lightgoldenrodyellow;
+    width: 100%;
+}
