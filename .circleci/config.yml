@@ -15,9 +15,9 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "d3:1d:e1:38:fd:a1:c0:55:38:04:aa:63:95:af:de:60"
+            - "3f:1c:40:38:22:cd:d7:9e:7d:13:7d:c4:bd:a1:6b:fa"
       - run: yarn
-      - run: BUILD_ENV=production yarn build
+      - run: NODE_ENV=production yarn build
       - run:
           name: Tar and gz
           command: tar -czvf public.tar.gz -C public .
@@ -33,9 +33,9 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "d3:1d:e1:38:fd:a1:c0:55:38:04:aa:63:95:af:de:60"
+            - "3f:1c:40:38:22:cd:d7:9e:7d:13:7d:c4:bd:a1:6b:fa"
       - run: yarn
-      - run: BUILD_ENV=development yarn build
+      - run: NODE_ENV=development yarn build
       - run:
           name: Tar and gz
           command: tar -czvf public.tar.gz -C public .
@@ -54,7 +54,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "5c:f7:44:03:47:ea:54:0b:d2:88:b9:bc:cb:a1:52:b3"
+            - "3f:1c:40:38:22:cd:d7:9e:7d:13:7d:c4:bd:a1:6b:fa"
 
       - checkout
       - run: |
